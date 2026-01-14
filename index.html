@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FC Radeen-Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ====== Global Styles ====== */
+  body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #0d0d0d;
+    color: #fff;
+  }
+  a { text-decoration: none; }
+
+  /* ====== Header ====== */
+  header {
+    padding: 20px;
+    text-align: center;
+    background: linear-gradient(90deg,#0ff,#08c);
+    color: #000;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 2px solid #0ff;
+    border-radius: 0 0 20px 20px;
+  }
+  header p { margin: 5px 0; font-weight: 500; }
+  .header-link {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: #000;
+    color: #0ff;
+    border-radius: 30px;
+    font-weight: 700;
+    box-shadow: 0 0 15px #0ff;
+    transition: 0.3s;
+  }
+  .header-link:hover {
+    background: #0ff;
+    color: #000;
+    box-shadow: 0 0 25px #0ff;
+  }
+
+  /* ====== Redeem Cards ====== */
+  .codes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 20px;
+  }
+  .code-card {
+    background: #1a1a1a;
+    border-left: 5px solid #0ff;
+    border-radius: 15px;
+    padding: 18px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0,255,255,0.2);
+    transition: transform 0.2s;
+  }
+  .code-card:hover { transform: scale(1.02); }
+  .code-card h3 { margin: 0 0 6px 0; color: #0ff; font-weight: 700; }
+  .code-card p { margin: 4px 0; font-size: 0.9rem; color: #ccc; }
+  .badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-weight: 700;
+    font-size: 0.8rem;
+  }
+  .active { background: #0f0; color: #000; }
+  .expired { background: #f00; color: #fff; }
+  .copy-btn {
+    margin-top: 10px;
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: none;
+    background: #0ff;
+    color: #000;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 0 10px #0ff;
+  }
+  .copy-btn:hover {
+    background: #08c;
+    color: #fff;
+    box-shadow: 0 0 20px #0ff;
+  }
+
+  /* ====== Owner Panel ====== */
+  .owner-panel {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.97);
+    display: none;
+    flex-direction: column;
+    padding: 25px;
+    overflow-y: auto;
+    z-index: 200;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  @keyframes fadeIn { from {opacity: 0;} to {opacity:1;} }
+  .owner-panel h2 {
+    text-align: center;
+    color: #0ff;
+    margin-bottom: 15px;
+  }
+  .owner-panel input, .owner-panel select, .owner-panel textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 6px 0;
+    border-radius: 12px;
+    border: none;
+    font-size: 1rem;
+    outline: none;
+  }
+  .owner-btn {
+    padding: 10px 20px;
+    margin: 6px 0;
+    border-radius: 20px;
+    border: none;
+    background: #0ff;
+    color: #000;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+    box-shadow: 0 0 10px #0ff;
+  }
+  .owner-btn:hover {
+    background: #08c;
+    color: #fff;
+    box-shadow: 0 0 25px #0ff;
+  }
+  .code-list { margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
+  .owner-code-card {
+    background: #222;
+    padding: 12px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #fff;
+    flex-wrap: wrap;
+  }
+  .owner-code-actions button { margin-left: 5px; margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<header id="header">
+  <p>Easily get Redeem Codes here and enjoy exciting FC Mobile Game rewards instantly!</p>
+  <a href="https://redeem.fcm.ea.com/" target="_blank" class="header-link">Go to FC Mobile Redeem Site</a>
+</header>
+
+<div class="codes-container" id="codesContainer">
+  <!-- Redeem Code Cards will appear here -->
+</div>
+
+<!-- ====== Owner Panel ====== -->
+<div class="owner-panel" id="ownerPanel">
+  <h2>FC Radeen-Pro Owner Panel</h2>
+  <label>Redeem Code Name:</label>
+  <input type="text" id="newCodeName" placeholder="Code Name">
+  <label>Release Date:</label>
+  <input type="date" id="newCodeDate">
+  <label>Pack Contents:</label>
+  <textarea id="newCodePack" placeholder="What's inside the pack"></textarea>
+  <label>Status:</label>
+  <select id="newCodeStatus">
+    <option value="active">Active</option>
+    <option value="expired">Expired</option>
+  </select>
+  <button class="owner-btn" id="addCodeBtn">Add / Publish Code</button>
+  <hr>
+  <div class="code-list" id="ownerCodeList"></div>
+  <button class="owner-btn" id="closeOwnerBtn">Close Owner Panel</button>
+</div>
+
+<script>
+  // ====== Redeem Codes Data ======
+  let codes = [
+    {name: "FC1000GEMS", date: "2026-01-14", pack: "1000 Gems Pack", status: "active"},
+    {name: "FC50COINS", date: "2026-01-12", pack: "50 Coins Pack", status: "expired"}
+  ];
+
+  const codesContainer = document.getElementById('codesContainer');
+  const ownerPanel = document.getElementById('ownerPanel');
+  const ownerCodeList = document.getElementById('ownerCodeList');
+
+  // ====== Render User Side Codes ======
+  function renderCodes() {
+    codesContainer.innerHTML = "";
+    codes.forEach((c, i) => {
+      const card = document.createElement('div');
+      card.className = "code-card";
+      card.innerHTML = `
+        <h3>${c.name}</h3>
+        <p>Release Date: ${c.date}</p>
+        <p>Pack: ${c.pack}</p>
+        <span class="badge ${c.status}">${c.status.toUpperCase()}</span>
+        <button class="copy-btn" onclick="copyCode('${c.name}')">Copy Code</button>
+      `;
+      codesContainer.appendChild(card);
+    });
+  }
+
+  function copyCode(code) {
+    navigator.clipboard.writeText(code);
+    alert("Copied: " + code);
+  }
+
+  // ====== Render Owner Panel List ======
+  function renderOwnerList() {
+    ownerCodeList.innerHTML = "";
+    codes.forEach((c, i) => {
+      const card = document.createElement('div');
+      card.className = "owner-code-card";
+      card.innerHTML = `
+        <div>${c.name} | ${c.date} | ${c.pack} | ${c.status}</div>
+        <div class="owner-code-actions">
+          <button onclick="editCode(${i})">Edit</button>
+          <button onclick="deleteCode(${i})">Delete</button>
+          <button onclick="toggleStatus(${i})">Toggle Status</button>
+        </div>
+      `;
+      ownerCodeList.appendChild(card);
+    });
+  }
+
+  function editCode(index) {
+    const c = codes[index];
+    const newName = prompt("Edit Code Name", c.name);
+    if(newName) c.name = newName;
+    const newDate = prompt("Edit Date", c.date);
+    if(newDate) c.date = newDate;
+    const newPack = prompt("Edit Pack Contents", c.pack);
+    if(newPack) c.pack = newPack;
+    renderCodes();
+    renderOwnerList();
+  }
+
+  function deleteCode(index) {
+    if(confirm("Are you sure to delete this code?")) {
+      codes.splice(index,1);
+      renderCodes();
+      renderOwnerList();
+    }
+  }
+
+  function toggleStatus(index) {
+    codes[index].status = codes[index].status === "active" ? "expired" : "active";
+    renderCodes();
+    renderOwnerList();
+  }
+
+  // ====== Add New Code ======
+  document.getElementById('addCodeBtn').addEventListener('click',()=>{
+    const name = document.getElementById('newCodeName').value;
+    const date = document.getElementById('newCodeDate').value;
+    const pack = document.getElementById('newCodePack').value;
+    const status = document.getElementById('newCodeStatus').value;
+    if(name && date && pack) {
+      codes.push({name,date,pack,status});
+      renderCodes();
+      renderOwnerList();
+      alert("Code Published!");
+      document.getElementById('newCodeName').value="";
+      document.getElementById('newCodeDate').value="";
+      document.getElementById('newCodePack').value="";
+    } else { alert("Fill all fields!"); }
+  });
+
+  // ====== Owner Panel Triple Tap ======
+  let tapCount = 0;
+  let tapTimer;
+  const ownerCode = "369369";
+
+  document.getElementById('header').addEventListener('click', ()=>{
+    tapCount++;
+    if(tapCount === 3) {
+      tapCount=0;
+      const input = prompt("Enter Owner Code:");
+      if(input === ownerCode) {
+        ownerPanel.style.display="flex";
+        renderOwnerList();
+      } else { alert("Wrong Code!"); }
+    }
+    clearTimeout(tapTimer);
+    tapTimer = setTimeout(()=>{tapCount=0;},800);
+  });
+
+  document.getElementById('closeOwnerBtn').addEventListener('click',()=>{
+    ownerPanel.style.display="none";
+  });
+
+  // ====== Initial Render ======
+  renderCodes();
+</script>
+</body>
+</html>
